@@ -1,0 +1,18 @@
+<!doctype html>
+<html xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<h1 th:text="'hola desde el template'"></h1>
+
+
+
+
+
+<div th:replace="layout/front-end :: scripts"></div>
+
+</body>
+
+</html>
