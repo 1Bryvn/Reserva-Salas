@@ -9,8 +9,7 @@ import java.util.List;
 
 public interface UserService {
     List<UserEntity> findAllUsuarios();
-    UserEntity findUsuarioByEmail(@Param("email") String email);
-
     Integer register(@Param("userVO") UserVO userVO);
     List<UserEntity> loginUsuario(@Param("userVO") UserLoginVO userVO);
+    UserEntity findUsuarioByEmail(@Param("email") String email);
 }

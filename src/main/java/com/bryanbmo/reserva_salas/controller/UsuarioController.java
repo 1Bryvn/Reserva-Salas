@@ -7,7 +7,6 @@ import com.bryanbmo.reserva_salas.vo.UserLoginVO;
 import com.bryanbmo.reserva_salas.vo.UserVO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jmx.ParentAwareNamingStrategy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +23,6 @@ public class UsuarioController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private ParentAwareNamingStrategy objectNamingStrategy;
 
     @GetMapping("/usuarios")
     public ResponseEntity<ResponseDTO> getAllUsuarios() {
