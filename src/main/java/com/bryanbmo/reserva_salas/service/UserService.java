@@ -1,30 +1,16 @@
 package com.bryanbmo.reserva_salas.service;
 
-import com.bryanbmo.reserva_salas.model.Usuario;
-import com.bryanbmo.reserva_salas.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.bryanbmo.reserva_salas.entity.UserEntity;
+import com.bryanbmo.reserva_salas.vo.UserLoginVO;
+import com.bryanbmo.reserva_salas.vo.UserVO;
+import org.apache.ibatis.annotations.Param;
 
-@Service
-public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+import java.util.List;
 
+public interface UserService {
+    List<UserEntity> findAllUsuarios();
+    UserEntity findUsuarioByEmail(@Param("email") String email);
 
-    public Usuario autoIncrement(String email, String nombre){
-        return userRepository.findByEmail(email).orElseGet(() ->{
-            Usuario nuevo = new Usuario();
-            nuevo.setNombre(nombre);
-            nuevo.setEmail(email);
-            nuevo.setPassword("");
-            nuevo.setRol(Usuario.Rol.ESTUDIANTE);
-            return userRepository.save(nuevo);
-
-        });
-    }
-
-
-
-
-
+    Integer register(@Param("userVO") UserVO userVO);
+    List<UserEntity> loginUsuario(@Param("userVO") UserLoginVO userVO);
 }
