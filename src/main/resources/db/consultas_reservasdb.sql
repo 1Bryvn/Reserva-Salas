@@ -23,25 +23,25 @@ DROP TABLE IF EXISTS `reserva`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `reserva` (
-                           `id` bigint NOT NULL AUTO_INCREMENT,
-                           `fecha_reserva` date NOT NULL,
-                           `hora_inicio` time NOT NULL,
-                           `hora_fin` time NOT NULL,
-                           `estado` enum('RESERVADA','CANCELADA','FINALIZADA') COLLATE utf8mb4_unicode_ci DEFAULT 'RESERVADA',
-                           `usuario_id` bigint DEFAULT NULL,
-                           `sala_id` bigint DEFAULT NULL,
-                           PRIMARY KEY (`id`),
-                           KEY `usuario_id` (`usuario_id`),
-                           KEY `sala_id` (`sala_id`),
-                           CONSTRAINT `reserva_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`),
-                           CONSTRAINT `reserva_ibfk_2` FOREIGN KEY (`sala_id`) REFERENCES `sala` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `fecha_reserva` date NOT NULL,
+  `hora_inicio` time NOT NULL,
+  `hora_fin` time NOT NULL,
+  `estado` enum('RESERVADA','CANCELADA','FINALIZADA') COLLATE utf8mb4_unicode_ci DEFAULT 'RESERVADA',
+  `usuario_id` bigint DEFAULT NULL,
+  `sala_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `usuario_id` (`usuario_id`),
+  KEY `sala_id` (`sala_id`),
+  CONSTRAINT `reserva_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`),
+  CONSTRAINT `reserva_ibfk_2` FOREIGN KEY (`sala_id`) REFERENCES `sala` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 SELECT * FROM reserva;
 INSERT INTO reserva (fecha_reserva, hora_inicio, hora_fin, estado, usuario_id, sala_id) VALUES
-                                                                                            ('2025-08-10', '10:00:00', '11:00:00', 'RESERVADA', 1, 1),
-                                                                                            ('2025-08-11', '15:00:00', '16:30:00', 'FINALIZADA', 2, 2);
+('2025-08-10', '10:00:00', '11:00:00', 'RESERVADA', 1, 1),
+('2025-08-11', '15:00:00', '16:30:00', 'FINALIZADA', 2, 2);
 
 --
 -- Dumping data for table `reserva`
@@ -60,19 +60,19 @@ DROP TABLE IF EXISTS `sala`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `sala` (
-                        `id` bigint NOT NULL AUTO_INCREMENT,
-                        `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-                        `ubicacion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                        `capacidad` int DEFAULT NULL,
-                        `descripcion` text COLLATE utf8mb4_unicode_ci,
-                        PRIMARY KEY (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ubicacion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `capacidad` int DEFAULT NULL,
+  `descripcion` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 select * from sala;
 
 INSERT INTO sala (nombre, ubicacion, capacidad, descripcion) VALUES
-                                                                 ('Sala 101', 'Edificio A, primer piso', 10, 'Sala equipada con proyector y pizarra'),
-                                                                 ('Sala 202', 'Edificio B, segundo piso', 15, 'Sala con sillas móviles y TV LED');
+('Sala 101', 'Edificio A, primer piso', 10, 'Sala equipada con proyector y pizarra'),
+('Sala 202', 'Edificio B, segundo piso', 15, 'Sala con sillas móviles y TV LED');
 
 --
 -- Dumping data for table `sala`
@@ -91,14 +91,14 @@ DROP TABLE IF EXISTS `usuario`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuario` (
-                           `id` bigint NOT NULL AUTO_INCREMENT,
-                           `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-                           `email` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-                           `contrasena` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                           `rol` enum('ADMIN','ESTUDIANTE') COLLATE utf8mb4_unicode_ci NOT NULL,
-                           `activo` tinyint(1) DEFAULT '1',
-                           PRIMARY KEY (`id`),
-                           UNIQUE KEY `email` (`email`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `contrasena` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rol` enum('ADMIN','ESTUDIANTE') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `activo` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -107,30 +107,30 @@ select * from sala;
 SELECT * FROM reserva;
 
 SELECT
-    u.nombre AS nombre_usuario,
-    u.email AS email_usuario,
-    u.rol AS rol_usuario,
-    r.fecha_reserva,
-    r.hora_inicio,
-    r.hora_fin,
-    r.estado,
-    s.nombre AS nombre_sala,
-    s.ubicacion,
-    s.capacidad,
-    s.descripcion
+  u.nombre AS nombre_usuario,
+  u.email AS email_usuario,
+  u.rol AS rol_usuario,
+  r.fecha_reserva,
+  r.hora_inicio,
+  r.hora_fin,
+  r.estado,
+  s.nombre AS nombre_sala,
+  s.ubicacion,
+  s.capacidad,
+  s.descripcion
 FROM
-    reserva r
-        JOIN usuario u ON r.usuario_id = u.id
-        JOIN sala s ON r.sala_id = s.id
+  reserva r
+JOIN usuario u ON r.usuario_id = u.id
+JOIN sala s ON r.sala_id = s.id
 WHERE
-    u.rol = 'ESTUDIANTE';
+  u.rol = 'ESTUDIANTE';
 
 
 
 
 INSERT INTO usuario (nombre, email, contrasena, rol, activo) VALUES
-                                                                 ('Ana Pérez', 'ana.perez@duocuc.cl', 'contrasena123', 'ESTUDIANTE', 1),
-                                                                 ('Carlos Soto', 'carlos.soto@duocuc.cl', 'admin456', 'ADMIN', 1);
+('Ana Pérez', 'ana.perez@duocuc.cl', 'contrasena123', 'ESTUDIANTE', 1),
+('Carlos Soto', 'carlos.soto@duocuc.cl', 'admin456', 'ADMIN', 1);
 
 --
 -- Dumping data for table `usuario`
