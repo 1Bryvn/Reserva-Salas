@@ -1,113 +1,157 @@
--- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
---
--- Host: localhost    Database: reservasdb
--- ------------------------------------------------------
--- Server version	8.0.40
+-- ========================================
+-- BASE DE DATOS: reservasdb
+-- ========================================
+USE reservasdb;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `reserva`
---
-
+DROP TABLE IF EXISTS `prestamo`;
+DROP TABLE IF EXISTS `libro`;
 DROP TABLE IF EXISTS `reserva`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `reserva` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `fecha_reserva` date NOT NULL,
-  `hora_inicio` time NOT NULL,
-  `hora_fin` time NOT NULL,
-  `estado` enum('RESERVADA','CANCELADA','FINALIZADA') COLLATE utf8mb4_unicode_ci DEFAULT 'RESERVADA',
-  `usuario_id` bigint DEFAULT NULL,
-  `sala_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `usuario_id` (`usuario_id`),
-  KEY `sala_id` (`sala_id`),
-  CONSTRAINT `reserva_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`),
-  CONSTRAINT `reserva_ibfk_2` FOREIGN KEY (`sala_id`) REFERENCES `sala` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `reserva`
---
-
-LOCK TABLES `reserva` WRITE;
-/*!40000 ALTER TABLE `reserva` DISABLE KEYS */;
-/*!40000 ALTER TABLE `reserva` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sala`
---
-
 DROP TABLE IF EXISTS `sala`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `sala` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ubicacion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `capacidad` int DEFAULT NULL,
-  `descripcion` text COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sala`
---
-
-LOCK TABLES `sala` WRITE;
-/*!40000 ALTER TABLE `sala` DISABLE KEYS */;
-/*!40000 ALTER TABLE `sala` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `usuario`
---
-
 DROP TABLE IF EXISTS `usuario`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `usuario` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `contrasena` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `rol` enum('ADMIN','ESTUDIANTE') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `activo` tinyint(1) DEFAULT '1',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
+
+-- ========================================
+-- Tabla: USUARIO
+-- ========================================
+CREATE TABLE `usuario` (id
+                                     `id` BIGINT NOT NULL AUTO_INCREMENT,
+                        `nombre` VARCHAR(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+                        `email` VARCHAR(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+                        `contrasena` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+                        `rol` ENUM('ADMIN','ESTUDIANTE') COLLATE utf8mb4_unicode_ci NOT NULL,
+                        `activo` TINYINT(1) DEFAULT '1',password
+                            PRIMARY KEY (`id`),
+                        UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `usuario`
---
+select * from usuario;
+SHOW COLUMNS FROM usuario;
+ALTER TABLE usuario DROP COLUMN password;
+SHOW CREATE TABLE usuario;
 
-LOCK TABLES `usuario` WRITE;
-/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+select * from salas;
+select * from reservas;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+-- Insertar usuario Admin
+INSERT INTO `usuario` (nombre, email, contrasena, rol)
+VALUES ('Admin General', 'admin@roomly.cl', 'admin123', 'ADMIN');
 
--- Dump completed on 2025-07-24 16:11:44
+-- Insertar usuario Estudiante
+INSERT INTO `usuario` (nombre, email, contrasena, rol)
+VALUES ('Juan Pérez', 'juan@estudiante.cl', '123456', 'ESTUDIANTE');
+
+-- ========================================
+-- Tabla: SALA
+-- ========================================
+CREATE TABLE `sala` (
+                        `id` BIGINT NOT NULL AUTO_INCREMENT,
+                        `nombre` VARCHAR(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+                        `ubicacion` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                        `capacidad` INT DEFAULT NULL,
+                        `descripcion` TEXT COLLATE utf8mb4_unicode_ci,
+                        PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Salas iniciales
+INSERT INTO `sala` (nombre, ubicacion, capacidad, descripcion) VALUES
+                                                                   ('Sala 101', 'Edificio A - Piso 1', 8, 'Sala pequeña con TV y pizarra'),
+                                                                   ('Sala 202', 'Edificio B - Piso 2', 12, 'Sala mediana con proyector'),
+                                                                   ('Sala 303', 'Edificio C - Piso 3', 20, 'Sala grande equipada para grupos');
+
+select * from sala;
+
+-- ========================================
+-- Tabla: RESERVA
+-- ========================================
+CREATE TABLE `reserva` (
+                           `id` BIGINT NOT NULL AUTO_INCREMENT,
+                           `fecha_reserva` DATE NOT NULL,
+                           `hora_inicio` TIME NOT NULL,
+                           `hora_fin` TIME NOT NULL,
+                           `estado` ENUM('RESERVADA','CANCELADA','FINALIZADA') COLLATE utf8mb4_unicode_ci DEFAULT 'RESERVADA',
+                           `usuario_id` BIGINT DEFAULT NULL,
+                           `sala_id` BIGINT DEFAULT NULL,
+                           PRIMARY KEY (`id`),
+                           KEY `usuario_id` (`usuario_id`),
+                           KEY `sala_id` (`sala_id`),
+                           CONSTRAINT `reserva_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE,
+                           CONSTRAINT `reserva_ibfk_2` FOREIGN KEY (`sala_id`) REFERENCES `sala` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO reserva (fecha_reserva, hora_inicio, hora_fin, estado, usuario_id, sala_id) VALUES
+                                                                                            ('2025-08-10', '10:00:00', '11:00:00', 'RESERVADA', 1, 1),
+                                                                                            ('2025-08-11', '15:00:00', '16:30:00', 'FINALIZADA', 2, 2);
+
+SELECT
+    u.nombre AS nombre_usuario,
+    u.email AS email_usuario,
+    u.rol AS rol_usuario,
+    r.fecha_reserva,
+    r.hora_inicio,
+    r.hora_fin,
+    r.estado,
+    s.nombre AS nombre_sala,
+    s.ubicacion,
+    s.capacidad,
+    s.descripcion
+FROM
+    reserva r
+        JOIN usuario u ON r.usuario_id = u.id
+        JOIN sala s ON r.sala_id = s.id
+WHERE
+    u.rol = 'ESTUDIANTE';
+
+
+INSERT INTO reserva (
+    fecha_reserva,
+    hora_inicio,
+    hora_fin,
+    estado,
+    usuario_id,
+    sala_id
+)
+VALUES (
+           '2025-08-15',
+           '14:00:00',
+           '15:30:00',
+           'RESERVADA',
+           (SELECT id FROM usuario WHERE email = 'pedro.torres@estudiante.cl' AND rol = 'ESTUDIANTE'),
+           (SELECT id FROM sala WHERE nombre = 'Sala 101')
+       );
+
+select * from sala;
+
+select * from usuario;
+-- ========================================
+-- Tabla: LIBRO
+-- ========================================
+CREATE TABLE `libro` (
+                         `id` BIGINT NOT NULL AUTO_INCREMENT,
+                         `titulo` VARCHAR(150) NOT NULL,
+                         `autor` VARCHAR(100) NOT NULL,
+                         `categoria` VARCHAR(50),
+                         `disponible` TINYINT(1) DEFAULT 1,
+                         PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Libros iniciales
+INSERT INTO `libro` (titulo, autor, categoria) VALUES
+                                                   ('Introducción a Java', 'James Gosling', 'Programación'),
+                                                   ('Base de Datos MySQL', 'Michael Widenius', 'Bases de Datos'),
+                                                   ('Arquitectura de Software', 'Martin Fowler', 'Ingeniería de Software');
+
+select * from libro;
+
+-- ========================================
+-- Tabla: PRESTAMO
+-- ========================================
+CREATE TABLE `prestamo` (
+                            `id` BIGINT NOT NULL AUTO_INCREMENT,
+                            `usuario_id` BIGINT NOT NULL,
+                            `libro_id` BIGINT NOT NULL,
+                            `fecha_prestamo` DATE NOT NULL,
+                            `fecha_devolucion` DATE DEFAULT NULL,
+                            `devuelto` TINYINT(1) DEFAULT 0,
+                            PRIMARY KEY (`id`),
+                            FOREIGN KEY (`usuario_id`) REFERENCES `usuario`(`id`) ON DELETE CASCADE,
+                            FOREIGN KEY (`libro_id`) REFERENCES `libro`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
