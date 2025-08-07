@@ -30,7 +30,6 @@ public interface SalaMapper {
     // Crear nueva sala
     @Insert("INSERT INTO sala (nombre, ubicacion, capacidad, descripcion) " +
             "VALUES (#{salaVO.nombre}, #{salaVO.ubicacion}, #{salaVO.capacidad}, #{salaVO.descripcion})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
     Integer createSala(@Param("salaVO") SalaVO salaVO);
 
     // Actualizar sala

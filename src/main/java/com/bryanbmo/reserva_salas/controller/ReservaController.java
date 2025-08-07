@@ -1,13 +1,16 @@
 package com.bryanbmo.reserva_salas.controller;
 
 import com.bryanbmo.reserva_salas.dto.ResponseDTO;
+import com.bryanbmo.reserva_salas.entity.ReservaEntity;
 import com.bryanbmo.reserva_salas.service.ReservaService;
 import com.bryanbmo.reserva_salas.vo.ReservaVO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -19,7 +22,7 @@ public class ReservaController {
     private ReservaService reservaService;
 
 
-    @PostMapping("/reserva")
+    @PostMapping("/postReserva")
     public @ResponseBody ResponseDTO createReserva(@RequestBody ReservaVO request) {
 
         ResponseDTO responseDTO = new ResponseDTO();
@@ -46,6 +49,64 @@ public class ReservaController {
         }
 
     }
+    @GetMapping("/getReservas")
+    public ResponseEntity<ResponseDTO> getAllService(){
 
+        ResponseDTO resp = ResponseDTO.builder().build();
+
+        List<ReservaEntity> reservaEntityList = reservaService.findAllReservas();
+
+        try{
+            if(reservaEntityList != null){
+                resp = ResponseDTO
+                        .builder()
+                        .status(Objects.nonNull(reservaEntityList))
+                        .message(Objects.nonNull(reservaEntityList)? "Reservas obtenidas con éxito" : "Ha ocurrido un error al obtener las reservas")
+                        .data(reservaEntityList)
+                        .build();
+            }
+            log.info("Reservas obtenidas con éxito");
+            return new ResponseEntity<ResponseDTO>(resp, HttpStatus.OK);
+        }catch (Exception ex){
+            log.error("ERROR, no se encontraron reservas");
+            return new ResponseEntity<ResponseDTO>(resp, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @GetMapping("/findReservaById/{id}")
+    public ReservaEntity findReservaById(@PathVariable Long id){
+        ReservaEntity rev = reservaService.findReservaById(id);
+        return rev;
+    }
+
+    @DeleteMapping("/deleteReserva/{id}")
+    public String deleteReserva(@PathVariable Long id){
+        reservaService.deleteReserva(id);
+        return "La reserva a sido eliminada";
+    }
+
+    @PutMapping("/updateReservaById/{id}")
+    public ResponseEntity<ResponseDTO> updateReserva(@PathVariable Long id, @RequestBody ReservaVO request){
+
+        ResponseDTO responseDTO = new  ResponseDTO();
+
+        Integer updateReserva = reservaService.updateReserva(id, request);
+        try{
+            if(updateReserva != null){
+                responseDTO = ResponseDTO
+                        .builder()
+                        .status(Objects.nonNull(updateReserva))
+                        .message(Objects.nonNull(updateReserva)?  "Reserva actualizada con éxito" : "Error al actualizar al reserva")
+                        .data(updateReserva)
+                        .build();
+            }
+            log.info("Reserva actualizada con exito");
+            return new ResponseEntity<ResponseDTO>(responseDTO,HttpStatus.OK);
+        }catch (Exception ex){
+            log.error("ERROR, no se a podido actualizar");
+            return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

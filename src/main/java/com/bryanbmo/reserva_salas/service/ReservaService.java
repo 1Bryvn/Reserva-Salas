@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ReservaService {
     Integer createReserva(@Param("reservaVO") ReservaVO reservaVO);
-    List<ReservaEntity> findReservasByUsuario(Long usuarioId);
-
+    List<ReservaEntity> findAllReservas();
+    ReservaEntity findReservaById(Long id);
+    Integer updateReserva(@Param("id") Long id, @Param("reservaVO") ReservaVO reservaVO);
+    Integer deleteReserva(Long id);
 }

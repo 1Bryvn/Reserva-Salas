@@ -9,6 +9,7 @@ import java.time.LocalTime;
 
 @Data
 public class ReservaVO {
+    private Long id;
     private LocalDate fechaReserva;
     private LocalTime horaInicio;
     private LocalTime horaFin;

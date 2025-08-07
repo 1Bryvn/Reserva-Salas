@@ -1,6 +1,7 @@
 package com.bryanbmo.reserva_salas.controller;
 
 import com.bryanbmo.reserva_salas.dto.ResponseDTO;
+import com.bryanbmo.reserva_salas.entity.SalaEntity;
 import com.bryanbmo.reserva_salas.entity.UserEntity;
 import com.bryanbmo.reserva_salas.service.UserService;
 import com.bryanbmo.reserva_salas.vo.UserLoginVO;
@@ -24,7 +25,7 @@ public class UsuarioController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/usuarios")
+    @GetMapping("/getUsuarios")
     public ResponseEntity<ResponseDTO> getAllUsuarios() {
         ResponseDTO resp = ResponseDTO.builder().build();
         List<UserEntity> users = userService.findAllUsuarios();
@@ -44,6 +45,12 @@ public class UsuarioController {
             return new ResponseEntity<ResponseDTO>(resp, HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @GetMapping("/findUserioByEmail/{email}")
+    public UserEntity findUsuarioByEmail(@PathVariable String email){
+        UserEntity userEntity = userService.findUsuarioByEmail(email);
+        return userEntity;
     }
 
     @PostMapping("/usuarios/registro")
