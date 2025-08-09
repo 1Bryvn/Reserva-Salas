@@ -75,9 +75,27 @@ public class ReservaController {
     }
 
     @GetMapping("/findReservaById/{id}")
-    public ReservaEntity findReservaById(@PathVariable Long id){
-        ReservaEntity rev = reservaService.findReservaById(id);
-        return rev;
+    public ResponseEntity<ResponseDTO> findReservaById(@PathVariable Long id){
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        ReservaEntity reserva = reservaService.findReservaById(id);
+
+        try{
+            if (reserva != null){
+    responseDTO = ResponseDTO
+            .builder()
+            .status(Objects.nonNull(reserva))
+            .message(Objects.nonNull(reserva)?  "Id de reserva encontrada exitosamente" : "Error al encontrar la reserva")
+            .data(reserva)
+            .build();
+
+            }
+            log.info("Reserva encontrada exitosamente");
+            return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("ERROR, no se a podido encontrar el ID");
+            return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/deleteReserva/{id}")
@@ -91,8 +109,8 @@ public class ReservaController {
 
         ResponseDTO responseDTO = new  ResponseDTO();
 
-        Integer updateReserva = reservaService.updateReserva(id, request);
         try{
+            Integer updateReserva = reservaService.updateReserva(id, request);
             if(updateReserva != null){
                 responseDTO = ResponseDTO
                         .builder()
