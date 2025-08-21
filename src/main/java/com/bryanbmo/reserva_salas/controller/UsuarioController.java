@@ -1,7 +1,6 @@
 package com.bryanbmo.reserva_salas.controller;
 
 import com.bryanbmo.reserva_salas.dto.ResponseDTO;
-import com.bryanbmo.reserva_salas.entity.SalaEntity;
 import com.bryanbmo.reserva_salas.entity.UserEntity;
 import com.bryanbmo.reserva_salas.service.UserService;
 import com.bryanbmo.reserva_salas.vo.UserLoginVO;
@@ -48,9 +47,24 @@ public class UsuarioController {
     }
 
     @GetMapping("/findUserioByEmail/{email}")
-    public UserEntity findUsuarioByEmail(@PathVariable String email){
+    public ResponseEntity<ResponseDTO> findUsuarioByEmail(@PathVariable String email){
+        ResponseDTO responseDTO = new ResponseDTO();
         UserEntity userEntity = userService.findUsuarioByEmail(email);
-        return userEntity;
+        try{
+            if(userEntity != null){
+                responseDTO = ResponseDTO
+                        .builder()
+                        .status(Objects.nonNull(userEntity))
+                        .message(Objects.nonNull(userEntity)?  "Email de usuario encontrado exitosamente" : "Error al encontrar email")
+                        .data(userEntity)
+                        .build();
+            }
+            log.info("Email de usuario encontrado exitosamente");
+            return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("ERROR, email de usuario inexistente");
+            return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/usuarios/registro")
