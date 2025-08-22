@@ -12,4 +12,5 @@ public interface UserService {
     Integer register(@Param("userVO") UserVO userVO);
     List<UserEntity> loginUsuario(@Param("userVO") UserLoginVO userVO);
     UserEntity findUsuarioByEmail(@Param("email") String email);
+    Integer deleteUserById(Long id);
 }

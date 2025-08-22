@@ -123,4 +123,30 @@ public class UsuarioController {
 
   }
 
+
+  @DeleteMapping("deleteUserById/{id}")
+    public ResponseEntity<ResponseDTO> deleteUserById(@PathVariable Long id){
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        try{
+            Integer deleteUserById = userService.deleteUserById(id);
+            if(deleteUserById != null){
+                responseDTO = ResponseDTO
+                        .builder()
+                        .status(Objects.nonNull(deleteUserById))
+                        .message(Objects.nonNull(deleteUserById)?  "Usuario eliminado con éxito" : "Error al eliminar usuario")
+                        .data(deleteUserById)
+                        .build();
+            }
+            log.info("Usuario eliminado con exito");
+            return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error, no se a podido eliminar el usuario");
+            return new ResponseEntity<ResponseDTO>(responseDTO , HttpStatus.BAD_REQUEST);
+        }
+  }
+
+
+
+
 }

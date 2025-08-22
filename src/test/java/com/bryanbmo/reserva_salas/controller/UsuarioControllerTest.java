@@ -15,8 +15,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -128,6 +127,22 @@ public class UsuarioControllerTest {
                 .andExpect(jsonPath("$.data.email").value("juan@estudiante.cl"))
                 .andExpect(jsonPath("$.data.rol").value("ESTUDIANTE"))
                 .andExpect(jsonPath("$.data.activo").value(true));
+    }
+
+
+
+    @Test
+    void testDeleteUserById() throws Exception {
+        // Arrange - simulamos que userService elimina el usuario con id=3 y devuelve 1
+        when(userService.deleteUserById(3L)).thenReturn(1);
+
+        // Act + Assert
+        mockMvc.perform(delete("/api/deleteUserById/{id}", 3L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(true))
+                .andExpect(jsonPath("$.message").value("Usuario eliminado con éxito"))
+                .andExpect(jsonPath("$.data").value(1));
     }
 
 

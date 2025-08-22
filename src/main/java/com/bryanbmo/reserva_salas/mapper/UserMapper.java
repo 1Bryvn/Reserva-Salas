@@ -33,9 +33,6 @@ public interface UserMapper {
     Integer register(@Param("userVO") UserVO userVO);
 
 
-
-
-
     @Select("SELECT " +
             "id as id, " +
             "nombre as nombre, " +
@@ -46,4 +43,8 @@ public interface UserMapper {
             "FROM usuario " +
             "WHERE email = #{userVO.email} AND contrasena = #{userVO.contrasena} AND activo = 1")
     List<UserEntity> loginUsuario(@Param("userVO") UserLoginVO userVO);
+
+
+    @Delete("DELETE FROM usuario WHERE id = #{id}")
+    Integer deleteUserById(Long id);
 }
