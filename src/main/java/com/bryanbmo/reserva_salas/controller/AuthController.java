@@ -12,9 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -25,120 +23,56 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
-
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/registro")
     public ResponseEntity<ResponseDTO> register(@RequestBody UserVO request) {
         try {
-            // ================= VALIDACIÓN DE CAMPOS =================
-            if (request.getNombre() == null || request.getNombre().isBlank() ||
-                    request.getEmail() == null || request.getEmail().isBlank() ||
-                    request.getContrasena() == null || request.getContrasena().isBlank() ||
-                    request.getRol() == null || request.getRol().isBlank()) {
-
-                return ResponseEntity.badRequest().body(
-                        ResponseDTO.builder()
-                                .status(false)
-                                .message("Todos los campos (nombre, email, contraseña, rol) son obligatorios")
-                                .build()
-                );
+            if (request.getNombre() == null || request.getEmail() == null
+                    || request.getContrasena() == null || request.getRol() == null) {
+                return ResponseEntity.badRequest()
+                        .body(ResponseDTO.builder().status(false).message("Todos los campos son obligatorios").build());
             }
 
-            // ================= VERIFICAR EMAIL DUPLICADO =================
             if (userService.findUsuarioByEmail(request.getEmail()) != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                        ResponseDTO.builder()
-                                .status(false)
-                                .message("El email ya está registrado")
-                                .build()
-                );
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(ResponseDTO.builder().status(false).message("Email ya registrado").build());
             }
 
-            // ================= ENCRIPTAR CONTRASEÑA =================
-            request.setContrasena(passwordEncoder.encode(request.getContrasena()));
+            // Registrar usuario (el password se encripta dentro del service)
+            userService.register(request);
 
-            // ================= REGISTRAR USUARIO =================
-            Integer register = userService.register(request);
-
-            if (register != null && register > 0) {
-                log.info("Usuario registrado con éxito: {}", request.getEmail());
-                return ResponseEntity.ok(ResponseDTO.builder()
-                        .status(true)
-                        .message("Usuario registrado con éxito")
-                        .data(register)
-                        .build());
-            } else {
-                log.warn("Registro fallido para usuario: {}", request.getEmail());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        ResponseDTO.builder()
-                                .status(false)
-                                .message("Error al registrar el usuario")
-                                .build()
-                );
-            }
+            return ResponseEntity.ok(ResponseDTO.builder().status(true).message("Usuario registrado con éxito").build());
 
         } catch (Exception ex) {
-            log.error("Error en registro", ex); // mostrar stack trace completo
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    ResponseDTO.builder()
-                            .status(false)
-                            .message("Error interno al registrar el usuario")
-                            .build()
-            );
+            log.error("Error en registro", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseDTO.builder().status(false).message("Error interno").build());
         }
     }
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> login(@RequestBody UserLoginVO request) {
         try {
-            // Buscar usuario por email
+            // Autenticación usando Spring Security
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getContrasena())
+            );
+
+            // Buscar usuario en BD
             UserEntity user = userService.findUsuarioByEmail(request.getEmail());
 
-            if (user == null) {
-                log.warn("Intento de login fallido: usuario no encontrado");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                        ResponseDTO.builder()
-                                .status(false)
-                                .message("Email o contraseña incorrectos")
-                                .build()
-                );
-            }
-
-            // Validar contraseña con PasswordEncoder
-            if (!passwordEncoder.matches(request.getContrasena(), user.getContrasena())) {
-                log.warn("Credenciales incorrectas para email: {}", request.getEmail());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                        ResponseDTO.builder()
-                                .status(false)
-                                .message("Email o contraseña incorrectos")
-                                .build()
-                );
-            }
-
-            // Generar JWT incluyendo rol
+            // Generar JWT
             String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRol());
 
-            log.info("Usuario {} inició sesión correctamente", user.getEmail());
-            return ResponseEntity.ok(
-                    ResponseDTO.builder()
-                            .status(true)
-                            .message("Login exitoso")
-                            .data(token)
-                            .build()
-            );
+            return ResponseEntity.ok(ResponseDTO.builder().status(true).message("Login exitoso").data(token).build());
 
         } catch (Exception ex) {
-            log.error("Error en login: {}", ex.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    ResponseDTO.builder()
-                            .status(false)
-                            .message("Error interno en el login")
-                            .build()
-            );
+            log.error("Error en login", ex);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ResponseDTO.builder().status(false).message("Email o contraseña incorrectos").build());
         }
     }
 }

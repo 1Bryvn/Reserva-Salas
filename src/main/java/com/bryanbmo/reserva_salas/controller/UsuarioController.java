@@ -94,36 +94,6 @@ public class UsuarioController {
 
     }
 
-    @PostMapping("/usuarios/login")
-    public @ResponseBody ResponseDTO loginUsuario(@RequestBody UserLoginVO request) {
-
-        ResponseDTO responseDTO = new ResponseDTO();
-
-        List<UserEntity> userlistLogin = userService.loginUsuario(request);
-
-        try{
-            if(userlistLogin != null){
-                responseDTO = ResponseDTO
-                        .builder()
-                        .status(Objects.nonNull(request))
-                        .message(Objects.nonNull(request) ? "Email y contraseña ingresado correctamente" : "Email y contraseña incorrectos")
-                        .data(request)
-                        .build();
-
-            log.info("Email y contraseña ingresados correctamente");
-            return responseDTO;
-        }else {
-            log.info("Error, email o contraseña se encuentran vacios");
-            return null;
-        }
-    }catch(Exception ex){
-        log.error("Error, email y contraseña incorrectos");
-        return responseDTO;
-    }
-
-  }
-
-
   @DeleteMapping("deleteUserById/{id}")
     public ResponseEntity<ResponseDTO> deleteUserById(@PathVariable Long id){
         ResponseDTO responseDTO = new ResponseDTO();

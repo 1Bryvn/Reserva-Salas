@@ -36,11 +36,7 @@ public class UserServiceImpl implements UserService {
 
         return userMapper.register(userVO);
     }
-    @Override
-    public List<UserEntity> loginUsuario(UserLoginVO userVO) {
 
-        return userMapper.loginUsuario(userVO);
-    }
     @Override
     public Integer deleteUserById(Long id){
         return userMapper.deleteUserById(id);

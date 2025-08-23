@@ -1,68 +1,55 @@
 package com.bryanbmo.reserva_salas.config;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
+    // Tiempo de expiración: 2 horas
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 2;
 
-    private final String jwtSecret = "SecretKeyParaJWTSuperSeguraDeAlMenos32Chars";
-    private final long jwtExpirationMs = 86400000; // 24h
-    private final Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    // Clave secreta segura >= 512 bits para HS512
+    private final SecretKey secretKey;
 
+    public JwtTokenProvider() {
+        // Genera una clave segura para HS512
+        this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    }
 
-    // ================= GENERAR TOKEN =================
-    public String generateToken(String username, String rol) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("rol", rol); // agregamos el rol al token
-
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
-
+    // Generar token
+    public String generateToken(String email, String rol) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .setSubject(email)
+                .claim("rol", rol)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
                 .compact();
     }
 
-    // ================= OBTENER USERNAME =================
-    public String obtenerUsernameDeToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
+    // Obtener email desde token
+    public String getEmailFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
+        return claims.getSubject();
     }
 
-    // ================= OBTENER ROL =================
-    public String obtenerRolDeToken(String token) {
-        return (String) Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("rol");
-    }
-
-    // ================= VALIDAR TOKEN =================
-    public boolean validarToken(String token) {
+    // Validar token
+    public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (JwtException | IllegalArgumentException ex) {
             return false;
         }
     }

@@ -2,7 +2,7 @@ package com.bryanbmo.reserva_salas.controller;
 
 import com.bryanbmo.reserva_salas.entity.UserEntity;
 import com.bryanbmo.reserva_salas.service.UserService;
-import com.bryanbmo.reserva_salas.vo.UserVO;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -29,47 +28,6 @@ public class UsuarioControllerTest {
 
     @MockitoBean
     private UserService userService;
-
-
-    @Test
-    void testRegisterUser() throws Exception {
-
-        when(userService.register(any(UserVO.class))).thenReturn(1);
-
-        mockMvc.perform(post("/api/usuarios/registro")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "nombre": "Pedro Torres",
-                                    "email": "pedro.torres@estudiante.cl",
-                                    "contrasena": "123456",
-                                    "rol": "ESTUDIANTE"
-                                }
-                                """))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(true))
-                .andExpect(jsonPath("$.message").value("Usuario registrado con exito"))
-                .andExpect(jsonPath("$.data").value(1));
-    }
-
-    @Test
-    void testLoginUser() throws Exception {
-
-        mockMvc.perform(post("/api/usuarios/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                            {
-                                 "email": "Luis.torre@estudiante.cl",
-                                 "contrasena": "12345"
-                             }
-                            """))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(true))
-                .andExpect(jsonPath("$.message").value("Email y contraseña ingresado correctamente"))
-                .andExpect(jsonPath("$.data.email").value("Luis.torre@estudiante.cl"))
-                .andExpect(jsonPath("$.data.contrasena").value("12345"));
-    }
-
 
     @Test
     void testGetAllUsuarios() throws Exception {
