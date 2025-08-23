@@ -19,30 +19,14 @@ public interface UserMapper {
             " FROM usuario")
     List<UserEntity> findAllUsuarios();
 
-    @Select("SELECT id as id," +
-            " nombre as nombre," +
-            " email as email, " +
-            "contrasena as contrasena," +
-            " rol as rol," +
-            " activo as activo " +
-            "FROM usuario WHERE email = #{email}")
+    @Select("SELECT id as id, nombre as nombre, email as email, contrasena as contrasena, rol as rol, activo as activo " +
+            "FROM usuario WHERE email = #{email} AND activo = 1")
     UserEntity findUsuarioByEmail(@Param("email") String email);
+
 
     @Insert("INSERT INTO usuario (nombre, email, contrasena, rol, activo) " +
             "VALUES (#{userVO.nombre}, #{userVO.email}, #{userVO.contrasena}, #{userVO.rol}, 1)")
     Integer register(@Param("userVO") UserVO userVO);
-
-
-    @Select("SELECT " +
-            "id as id, " +
-            "nombre as nombre, " +
-            "email as email, " +
-            "contrasena as contrasena, " +
-            "rol as rol, " +
-            "activo as activo " +   // Espacio agregado
-            "FROM usuario " +
-            "WHERE email = #{userVO.email} AND contrasena = #{userVO.contrasena} AND activo = 1")
-    List<UserEntity> loginUsuario(@Param("userVO") UserLoginVO userVO);
 
 
     @Delete("DELETE FROM usuario WHERE id = #{id}")

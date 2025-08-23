@@ -18,16 +18,15 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity user = userMapper.findUsuarioByEmail(email);
+        System.out.println("Cargando usuario: " + user);
 
         if(user == null){
             throw new UsernameNotFoundException("Usuario no encontrado con email: " + email);
         }
-        String role = user.getRol() != null ? user.getRol() : "ESTUDIANTE";
-
         return User.builder()
-                .username(user.getEmail())          // email como identificador
-                .password(user.getContrasena())     // contraseña encriptada
-                .roles(role)                        // rol de la BD
+                .username(user.getEmail())
+                .password(user.getContrasena())   // CONTRASEÑA ENCRIPTADA
+                .roles(user.getRol())
                 .build();
     }
 }

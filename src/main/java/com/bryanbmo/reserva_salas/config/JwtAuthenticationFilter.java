@@ -23,39 +23,43 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserDetailsService customUserDetailService;
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
 
+        String token = null;
+        String email = null;
+
+        // Revisar si el header contiene "Bearer "
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+            token = authHeader.substring(7);
             try {
-                String username = jwtTokenProvider.obtenerUsernameDeToken(token);
+                email = jwtTokenProvider.getEmailFromToken(token);
+            } catch (Exception ex) {
+                logger.error("Error obteniendo email desde token", ex);
+            }
+        }
 
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    if (jwtTokenProvider.validarToken(token)) {
-                        UserDetails userDetails = customUserDetailService.loadUserByUsername(username);
+        // Validar token y cargar usuario en SecurityContext
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-                        UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(
-                                        userDetails,
-                                        null,
-                                        userDetails.getAuthorities()
-                                );
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            if (jwtTokenProvider.validateToken(token)) {
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }
-                }
-            } catch (Exception e) {
-                logger.warn("Token JWT inválido: {}", e.getMessage());
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
