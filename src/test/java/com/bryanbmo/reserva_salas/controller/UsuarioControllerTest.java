@@ -1,8 +1,9 @@
 package com.bryanbmo.reserva_salas.controller;
 
+import com.bryanbmo.reserva_salas.config.JwtTokenProvider;
 import com.bryanbmo.reserva_salas.entity.UserEntity;
 import com.bryanbmo.reserva_salas.service.UserService;
-
+import com.bryanbmo.reserva_salas.vo.DataUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,9 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UsuarioController.class)
-@AutoConfigureMockMvc
-public class UsuarioControllerTest {
-
+@AutoConfigureMockMvc(addFilters = false)
+class UsuarioControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -29,21 +29,22 @@ public class UsuarioControllerTest {
     @MockitoBean
     private UserService userService;
 
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+
     @Test
     void testGetAllUsuarios() throws Exception {
         // Mock de datos
-        List<UserEntity> mockUsers = List.of(
-                new UserEntity(1L, "Admin General", "admin@roomly.cl", "admin123", "ADMIN", true),
-                new UserEntity(2L, "Juan Pérez", "juan@estudiante.cl", "123456", "ESTUDIANTE", true),
-                new UserEntity(3L, "Pedro Gómez", "pedro@estudiante.cl", "pass123", "ESTUDIANTE", true),
-                new UserEntity(6L, "Pedro Torres", "pedro.torres@estudiante.cl", "123456", "ESTUDIANTE", true)
-        );
+        DataUser u1 = new DataUser(1L, "Admin General", "admin@roomly.cl", "ADMIN", true);
+        DataUser u2 = new DataUser(2L, "Juan Pérez", "juan@estudiante.cl", "ESTUDIANTE", true);
+        DataUser u3 = new DataUser(3L, "Pedro Gómez", "pedro@estudiante.cl", "ESTUDIANTE", true);
+        DataUser u4 = new DataUser(6L, "Pedro Torres", "pedro.torres@estudiante.cl", "ESTUDIANTE", true);
 
-        // Simular comportamiento del servicio
-        when(userService.findAllUsuarios()).thenReturn(mockUsers);
+        List<DataUser> mockUsers = List.of(u1, u2, u3, u4);
 
-        // Ejecutar petición y validar respuesta
-        mockMvc.perform(get("/api/getUsuarios")
+        when(userService.findAllUsers()).thenReturn(mockUsers);
+
+        mockMvc.perform(get("/api/getUsers")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(true))
@@ -61,7 +62,7 @@ public class UsuarioControllerTest {
 
     @Test
     void testFindUsuarioByEmail() throws Exception {
-        // Arrange - usuario de prueba
+        // Arrange
         UserEntity mockUser = new UserEntity(
                 1L,
                 "Juan Pérez",
@@ -87,11 +88,9 @@ public class UsuarioControllerTest {
                 .andExpect(jsonPath("$.data.activo").value(true));
     }
 
-
-
     @Test
     void testDeleteUserById() throws Exception {
-        // Arrange - simulamos que userService elimina el usuario con id=3 y devuelve 1
+        // Arrange
         when(userService.deleteUserById(3L)).thenReturn(1);
 
         // Act + Assert
@@ -102,8 +101,4 @@ public class UsuarioControllerTest {
                 .andExpect(jsonPath("$.message").value("Usuario eliminado con éxito"))
                 .andExpect(jsonPath("$.data").value(1));
     }
-
-
-
-
 }

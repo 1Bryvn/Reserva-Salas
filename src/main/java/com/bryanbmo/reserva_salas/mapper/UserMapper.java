@@ -1,7 +1,7 @@
 package com.bryanbmo.reserva_salas.mapper;
 
 import com.bryanbmo.reserva_salas.entity.UserEntity;
-import com.bryanbmo.reserva_salas.vo.UserLoginVO;
+import com.bryanbmo.reserva_salas.vo.DataUser;
 import com.bryanbmo.reserva_salas.vo.UserVO;
 import org.apache.ibatis.annotations.*;
 
@@ -18,6 +18,16 @@ public interface UserMapper {
             " activo as activo " +
             " FROM usuario")
     List<UserEntity> findAllUsuarios();
+
+
+    @Select("SELECT " +
+            "id as id," +
+            " nombre as nombre," +
+            " email as email," +
+            " rol as rol," +
+            " activo as activo " +
+            " FROM usuario")
+    List<DataUser> findAllUsers();
 
     @Select("SELECT id as id, nombre as nombre, email as email, contrasena as contrasena, rol as rol, activo as activo " +
             "FROM usuario WHERE email = #{email} AND activo = 1")

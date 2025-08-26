@@ -1,19 +1,21 @@
 package com.bryanbmo.reserva_salas.vo;
 
-import com.bryanbmo.reserva_salas.entity.SalaEntity;
-import com.bryanbmo.reserva_salas.entity.UserEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReservaVO {
     private Long id;
     private LocalDate fechaReserva;
     private LocalTime horaInicio;
     private LocalTime horaFin;
     private String estado;
-    private UserEntity usuario;
-    private SalaEntity sala;
+    private DataUser usuario;
+    private DataSala sala;
 }

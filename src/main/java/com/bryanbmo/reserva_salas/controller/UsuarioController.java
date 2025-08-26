@@ -3,6 +3,7 @@ package com.bryanbmo.reserva_salas.controller;
 import com.bryanbmo.reserva_salas.dto.ResponseDTO;
 import com.bryanbmo.reserva_salas.entity.UserEntity;
 import com.bryanbmo.reserva_salas.service.UserService;
+import com.bryanbmo.reserva_salas.vo.DataUser;
 import com.bryanbmo.reserva_salas.vo.UserLoginVO;
 import com.bryanbmo.reserva_salas.vo.UserVO;
 import lombok.extern.log4j.Log4j2;
@@ -24,10 +25,10 @@ public class UsuarioController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/getUsuarios")
-    public ResponseEntity<ResponseDTO> getAllUsuarios() {
+    @GetMapping("/getUsers")
+    public ResponseEntity<ResponseDTO> getAllUsers() {
         ResponseDTO resp = ResponseDTO.builder().build();
-        List<UserEntity> users = userService.findAllUsuarios();
+        List<DataUser> users = userService.findAllUsers();
         try{
             if(users != null){
                 resp =ResponseDTO
@@ -37,10 +38,10 @@ public class UsuarioController {
                         .data(users)
                         .build();
             }
-            log.info("Usuarios obtenidos con exito");
+            log.info("Users obtenidos con exito");
             return new ResponseEntity<ResponseDTO>(resp, HttpStatus.OK);
         }catch (Exception ex){
-            log.error("Error, no se encontraron los usuarios");
+            log.error("Error, no se encontraron los Users");
             return new ResponseEntity<ResponseDTO>(resp, HttpStatus.BAD_REQUEST);
         }
 
@@ -65,33 +66,6 @@ public class UsuarioController {
             log.error("ERROR, email de usuario inexistente");
             return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @PostMapping("/usuarios/registro")
-    public @ResponseBody ResponseDTO register(@RequestBody UserVO request){
-
-        ResponseDTO responseDTO = new ResponseDTO();
-
-        Integer register = userService.register(request);
-        try{
-            if(register != null) {
-                responseDTO = ResponseDTO
-                        .builder()
-                        .status(Objects.nonNull(register))
-                        .message(Objects.nonNull(register)? "Usuario registrado con exito" : "Ha ocurrido un error al registrar el usuario")
-                        .data(register)
-                        .build();
-                log.info("Usuario registrado con exito");
-                return responseDTO;
-            }else{
-                log.info("Error, el usuario se encuentra vacio");
-                return null;
-            }
-        } catch (Exception ex) {
-           log.error("Error, no se registro el usuario");
-           return responseDTO;
-        }
-
     }
 
   @DeleteMapping("deleteUserById/{id}")

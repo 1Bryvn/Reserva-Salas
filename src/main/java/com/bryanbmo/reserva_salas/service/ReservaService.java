@@ -8,8 +8,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface ReservaService {
-    Integer createReserva(@Param("reservaVO") ReservaVO reservaVO);
-    List<ReservaEntity> findAllReservas();
+    Integer createReserva(@Param("reservaVo")ReservaVO reservaVO);
+    List<ReservaVO> findAllReservas();
     ReservaEntity findReservaById(Long id);
     Integer updateReserva(@Param("id") Long id, @Param("reservaVO") ReservaVO reservaVO);
     Integer deleteReserva(Long id);

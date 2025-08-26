@@ -54,7 +54,7 @@ public class ReservaController {
 
         ResponseDTO resp = ResponseDTO.builder().build();
 
-        List<ReservaEntity> reservaEntityList = reservaService.findAllReservas();
+        List<ReservaVO> reservaEntityList = reservaService.findAllReservas();
 
         try{
             if(reservaEntityList != null){

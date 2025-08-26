@@ -18,7 +18,6 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity user = userMapper.findUsuarioByEmail(email);
-        System.out.println("Cargando usuario: " + user);
 
         if(user == null){
             throw new UsernameNotFoundException("Usuario no encontrado con email: " + email);

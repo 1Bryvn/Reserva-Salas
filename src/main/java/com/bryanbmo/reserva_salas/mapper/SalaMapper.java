@@ -1,7 +1,7 @@
 package com.bryanbmo.reserva_salas.mapper;
 
 import com.bryanbmo.reserva_salas.entity.SalaEntity;
-import com.bryanbmo.reserva_salas.vo.SalaVO;
+import com.bryanbmo.reserva_salas.vo.DataSala;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -29,13 +29,13 @@ public interface SalaMapper {
 
     // Crear nueva sala
     @Insert("INSERT INTO sala (nombre, ubicacion, capacidad, descripcion) " +
-            "VALUES (#{salaVO.nombre}, #{salaVO.ubicacion}, #{salaVO.capacidad}, #{salaVO.descripcion})")
-    Integer createSala(@Param("salaVO") SalaVO salaVO);
+            "VALUES (#{dataSala.nombre}, #{dataSala.ubicacion}, #{dataSala.capacidad}, #{dataSala.descripcion})")
+    Integer createSala(@Param("dataSala") DataSala dataSala);
 
     // Actualizar sala
-    @Update("UPDATE sala SET nombre = #{salaVO.nombre}, ubicacion = #{salaVO.ubicacion}, " +
-            "capacidad = #{salaVO.capacidad}, descripcion = #{salaVO.descripcion} WHERE id = #{id}")
-    Integer updateSala(@Param("id") Long id, @Param("salaVO") SalaVO salaVO);
+    @Update("UPDATE sala SET nombre = #{salaEntity.nombre}, ubicacion = #{salaEntity.ubicacion}, " +
+            "capacidad = #{salaEntity.capacidad}, descripcion = #{salaEntity.descripcion} WHERE id = #{id}")
+    Integer updateSala(@Param("id") Long id, @Param("dataSala") SalaEntity salaEntity);
 
     // Eliminar sala
     @Delete("DELETE FROM sala WHERE id = #{id}")

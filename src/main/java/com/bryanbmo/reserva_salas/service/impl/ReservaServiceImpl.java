@@ -4,8 +4,6 @@ import com.bryanbmo.reserva_salas.entity.ReservaEntity;
 import com.bryanbmo.reserva_salas.mapper.ReservaMapper;
 import com.bryanbmo.reserva_salas.service.ReservaService;
 import com.bryanbmo.reserva_salas.vo.ReservaVO;
-import com.fasterxml.jackson.annotation.JsonRawValue;
-import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,8 @@ public class ReservaServiceImpl implements ReservaService {
     public ReservaEntity findReservaById(Long id) {
         return reservaMapper.findReservaById(id);
     }
-    public List<ReservaEntity> findAllReservas(){
+
+    public List<ReservaVO> findAllReservas(){
         return reservaMapper.findAllReservas();
     }
 

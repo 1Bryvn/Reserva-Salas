@@ -15,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
@@ -33,23 +32,38 @@ public class AuthController {
             if (request.getNombre() == null || request.getEmail() == null
                     || request.getContrasena() == null || request.getRol() == null) {
                 return ResponseEntity.badRequest()
-                        .body(ResponseDTO.builder().status(false).message("Todos los campos son obligatorios").build());
+                        .body(ResponseDTO
+                                .builder().
+                                status(false)
+                                .message("Todos los campos son obligatorios")
+                                .build());
             }
 
             if (userService.findUsuarioByEmail(request.getEmail()) != null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(ResponseDTO.builder().status(false).message("Email ya registrado").build());
+                        .body(ResponseDTO.builder()
+                                .status(false)
+                                .message("Email ya registrado")
+                                .build());
             }
 
             // Registrar usuario (el password se encripta dentro del service)
             userService.register(request);
 
-            return ResponseEntity.ok(ResponseDTO.builder().status(true).message("Usuario registrado con éxito").build());
+            return ResponseEntity.ok(
+                    ResponseDTO.builder()
+                    .status(true)
+                    .message("Usuario registrado con éxito")
+                    .build());
 
         } catch (Exception ex) {
             log.error("Error en registro", ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ResponseDTO.builder().status(false).message("Error interno").build());
+                    .body(ResponseDTO
+                            .builder()
+                            .status(false)
+                            .message("Error interno")
+                            .build());
         }
     }
 

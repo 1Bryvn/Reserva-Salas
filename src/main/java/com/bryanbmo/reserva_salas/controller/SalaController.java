@@ -1,13 +1,10 @@
 package com.bryanbmo.reserva_salas.controller;
 
 import com.bryanbmo.reserva_salas.dto.ResponseDTO;
-import com.bryanbmo.reserva_salas.entity.ReservaEntity;
 import com.bryanbmo.reserva_salas.entity.SalaEntity;
 import com.bryanbmo.reserva_salas.service.SalaService;
-import com.bryanbmo.reserva_salas.vo.ReservaVO;
-import com.bryanbmo.reserva_salas.vo.SalaVO;
+import com.bryanbmo.reserva_salas.vo.DataSala;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.spi.ObjectThreadContextMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,17 +48,34 @@ public class SalaController {
     }
 
     @GetMapping("/findSalaById/{id}")
-    public SalaEntity findSalaById(@PathVariable Long id){
+    public ResponseEntity<ResponseDTO> findSalaById(@PathVariable Long id){
+        ResponseDTO resp = new ResponseDTO().builder().build();
+
         SalaEntity salaEntity = salaService.findSalaById(id);
-        return salaEntity;
+        try{
+            if(salaEntity != null){
+                resp = ResponseDTO.builder()
+                        .status(Objects.nonNull(salaEntity))
+                        .message(Objects.nonNull(salaEntity)? "Id de Sala encontrada con exito": "Error al encontrar el id")
+                        .data(salaEntity)
+                        .build();
+
+            }
+            log.info("Sala obtenida con exito");
+            return new ResponseEntity<ResponseDTO>(resp, HttpStatus.OK);
+
+        }catch (Exception ex){
+            log.error("ERROR, no se encontraron salas");
+            return  new ResponseEntity<ResponseDTO>(resp,HttpStatus.BAD_REQUEST);
+        }
     }
 
+
     @PostMapping("/createSala")
-    public @ResponseBody ResponseDTO createSala(@RequestBody SalaVO request){
+    public @ResponseBody ResponseDTO createSala(@RequestBody DataSala request){
         ResponseDTO responseDTO = new ResponseDTO();
 
         Integer createSala = salaService.createSala(request);
-
 
         try{
             if(createSala != null){
@@ -85,7 +99,7 @@ public class SalaController {
 
 
     @PutMapping("/updateSalaById/{id}")
-    public ResponseEntity<ResponseDTO> updateSala(@PathVariable Long id, @RequestBody SalaVO request){
+    public ResponseEntity<ResponseDTO> updateSala(@PathVariable Long id, @RequestBody SalaEntity request){
 
         ResponseDTO responseDTO = new  ResponseDTO();
 

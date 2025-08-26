@@ -1,9 +1,15 @@
 package com.bryanbmo.reserva_salas.vo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class SalaVO {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class DataSala {
     private String nombre;
     private String ubicacion;
     private Integer capacidad;

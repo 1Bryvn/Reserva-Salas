@@ -3,6 +3,7 @@ package com.bryanbmo.reserva_salas.service.impl;
 import com.bryanbmo.reserva_salas.entity.UserEntity;
 import com.bryanbmo.reserva_salas.mapper.UserMapper;
 import com.bryanbmo.reserva_salas.service.UserService;
+import com.bryanbmo.reserva_salas.vo.DataUser;
 import com.bryanbmo.reserva_salas.vo.UserLoginVO;
 import com.bryanbmo.reserva_salas.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,8 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public List<UserEntity> findAllUsuarios() {
-
-        return userMapper.findAllUsuarios();
+    public List<DataUser> findAllUsers(){
+        return userMapper.findAllUsers();
     }
     @Override
     public UserEntity findUsuarioByEmail(String email) {

@@ -32,7 +32,7 @@ public interface ReservaMapper {
           )
         )
         """)
-    Integer createReserva(@Param("reservaVO") ReservaVO reservaVO);
+    Integer createReserva(@Param("reservaVO")ReservaVO reservaVO);
 
     @Select("""
         SELECT
@@ -45,6 +45,7 @@ public interface ReservaMapper {
             u.nombre AS "usuario.nombre",
             u.email AS "usuario.email",
             u.rol AS "usuario.rol",
+            u.activo AS "usuario.activo",
             s.id AS "sala.id",
             s.nombre AS "sala.nombre",
             s.ubicacion AS "sala.ubicacion",
@@ -55,7 +56,7 @@ public interface ReservaMapper {
         JOIN sala s ON r.sala_id = s.id
         WHERE u.rol = 'ESTUDIANTE'
     """)
-    List<ReservaEntity> findAllReservas();
+    List<ReservaVO> findAllReservas();
 
     @Select("""
         SELECT
@@ -97,7 +98,7 @@ public interface ReservaMapper {
             )
         WHERE id = #{id}
     """)
-    Integer updateReserva(@Param("id") Long id, @Param("reservaVO") ReservaVO reservaVO);
+    Integer updateReserva(@Param("id") Long id, @Param("reservaVO")ReservaVO reservaVO);
 
     @Delete("DELETE FROM reserva WHERE id = #{id}")
     Integer deleteReserva(Long id);

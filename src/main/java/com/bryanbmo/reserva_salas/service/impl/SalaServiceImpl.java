@@ -3,7 +3,7 @@ package com.bryanbmo.reserva_salas.service.impl;
 import com.bryanbmo.reserva_salas.entity.SalaEntity;
 import com.bryanbmo.reserva_salas.mapper.SalaMapper;
 import com.bryanbmo.reserva_salas.service.SalaService;
-import com.bryanbmo.reserva_salas.vo.SalaVO;
+import com.bryanbmo.reserva_salas.vo.DataSala;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +25,13 @@ public class SalaServiceImpl implements SalaService {
     }
 
     @Override
-    public Integer createSala(SalaVO salaVO) {
-        return salaMapper.createSala(salaVO);
+    public Integer createSala(DataSala dataSala) {
+        return salaMapper.createSala(dataSala);
     }
 
     @Override
-    public Integer updateSala(Long id, SalaVO salaVO) {
-        return salaMapper.updateSala(id, salaVO);
+    public Integer updateSala(Long id, SalaEntity salaEntity) {
+        return salaMapper.updateSala(id,salaEntity );
     }
 
     @Override

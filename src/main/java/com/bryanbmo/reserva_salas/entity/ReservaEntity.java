@@ -18,8 +18,6 @@ public class ReservaEntity {
     private LocalTime horaInicio;
     private LocalTime horaFin;
     private String estado;
-
-
     private UserEntity usuario;
     private SalaEntity sala;
 
